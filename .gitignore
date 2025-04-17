@@ -1,2 +1,8 @@
 .env
 .node_modules
+# Ignore everything
+*
+
+# But not these!
+!client/
+!client/**
