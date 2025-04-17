@@ -1,11 +1,24 @@
 import './App.css';
-import PostListing from './pages/PostListing';
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Listings from "./pages/Listings";
+import ListingDetails from "./pages/ListingDetails";
+import Dashboard from "./pages/Dashboard";
+import Navbar from "./components/Navbar"; 
 
 function App() {
   return (
-    <div className="App">
-      <PostListing />
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/listings" element={<Listings />} />
+        <Route path="/listings/:id" element={<ListingDetails />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Optional fallback route */}
+        <Route path="*" element={<div className="p-6">404 Not Found</div>} />
+      </Routes>
+    </>
   );
 }
 
