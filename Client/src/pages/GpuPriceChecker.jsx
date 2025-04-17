@@ -1,0 +1,193 @@
+import { useEffect, useState } from 'react';
+
+const GpuPriceChecker = () => {
+  const [gpuName, setGpuName] = useState('');
+  const [price, setPrice] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [timeoutId, setTimeoutId] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [countdown, setCountdown] = useState(null);
+  const [intervalId, setIntervalId] = useState(null);
+
+  // Seller input states
+  const [sellerPrice, setSellerPrice] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('Nvidia');
+  // default to "New"
+  const [gpuCondition, setGpuCondition] = useState('New'); 
+  const [image, setImage] = useState(null);
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setGpuName(value);
+    setPrice(null);
+    setLoading(false);
+    setHasSearched(false);
+    setCountdown(null);
+
+    if (timeoutId) clearTimeout(timeoutId);
+    if (intervalId) clearInterval(intervalId);
+
+    if (value.length >= 3) {
+      let seconds = 4;
+      setCountdown(seconds);
+
+      const newInterval = setInterval(() => {
+        seconds -= 1;
+        setCountdown(seconds);
+        if (seconds === 0) {
+          clearInterval(newInterval);
+        }
+      }, 1000);
+      setIntervalId(newInterval);
+
+      const newTimeout = setTimeout(() => {
+        setLoading(true);
+        fetch(`/api/price?query=${encodeURIComponent(value)}`)
+          .then(res => res.json())
+          .then(data => {
+            setHasSearched(true);
+            if (data.averagePrice) {
+              setPrice(data.averagePrice);
+            } else {
+              setPrice(null);
+            }
+          })
+          .catch(() => {
+            setHasSearched(true);
+            setPrice(null);
+          })
+          .finally(() => {
+            setLoading(false);
+            setCountdown(null);
+          });
+      }, 4000);
+
+      setTimeoutId(newTimeout);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('gpuName', gpuName);
+    formData.append('description', description);
+    formData.append('category', category);
+    formData.append('condition', gpuCondition);
+    formData.append('sellerPrice', sellerPrice);
+    if (image) formData.append('image', image);
+
+    try {
+      const res = await fetch('/api/gpus', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('GPU listing submitted successfully!');
+        // Optionally reset form
+        setGpuName('');
+        setPrice(null);
+        setDescription('');
+        setCategory('Nvidia');
+        setSellerPrice('');
+        setImage(null);
+        setHasSearched(false);
+      } else {
+        alert(`Submission failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error submitting listing:', error);
+      alert('An error occurred while submitting the listing.');
+    }
+  };
+
+  return (
+    <div style={{ marginBottom: '2rem' }}>
+      <h3>Post a GPU for Sale</h3>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Graphics Card Name:</label><br />
+          <input
+            type="text"
+            placeholder="e.g., RTX 4070 Ti"
+            value={gpuName}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+
+        {countdown !== null && countdown > 0 && (
+          <div style={{ color: 'gray' }}>Checking Amazon in {countdown}...</div>
+        )}
+        {loading && <div style={{ color: 'gray' }}>Checking Amazon...</div>}
+        {price && <div style={{ color: 'green' }}>Estimated Amazon Price: ${price}</div>}
+        {hasSearched && !loading && !price && (
+          <div style={{ color: 'red' }}>No price found.</div>
+        )}
+
+        <div>
+          <label>Description:</label><br />
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Category (Chipset):</label><br />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+          >
+            <option value="Nvidia">Nvidia</option>
+            <option value="AMD">AMD</option>
+            <option value="Intel">Intel</option>
+          </select>
+        </div>
+
+        <div>
+        <label>Condition:</label>
+        <select value={gpuCondition} onChange={(e) => setGpuCondition(e.target.value)}>
+          <option value="New">New</option>
+          <option value="Used">Used</option>
+        </select>
+        </div>
+
+        <div>
+          <label>Seller Price ($):</label><br />
+          <input
+            type="number"
+            value={sellerPrice}
+            onChange={(e) => setSellerPrice(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label>Upload Image:</label><br />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            required
+          />
+        </div>
+
+        <button type="submit" style={{ marginTop: '1rem' }}>Submit</button>
+      </form>
+    </div>
+  );
+};
+
+export default GpuPriceChecker;
