@@ -4,12 +4,12 @@ import Home from "./pages/Home";
 import Listings from "./pages/Listings";
 import ListingDetails from "./pages/ListingDetails";
 import Dashboard from "./pages/Dashboard";
-import Navbar from "./components/Navbar"; 
+import AppNavbar from "./components/Navbar"; 
 
 function App() {
   return (
     <>
-      <Navbar />
+      <AppNavbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/listings" element={<Listings />} />
