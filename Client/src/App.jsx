@@ -6,6 +6,7 @@ import ListingDetails from "./pages/ListingDetails";
 import Dashboard from "./pages/Dashboard";
 import AppNavbar from "./components/Navbar"; 
 import GpuPriceChecker from "./pages/GpuPriceChecker";
+import Login from "./components/Login";
 
 function App() {
   return (
