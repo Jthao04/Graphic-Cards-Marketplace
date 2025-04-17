@@ -1,4 +1,5 @@
 import React from 'react';
+import Login from './Login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 function AppNavbar() {
@@ -11,8 +12,7 @@ function AppNavbar() {
           <Nav className="ms-auto">
             <Nav.Link href="/">Dashboard</Nav.Link>
             <Nav.Link href="/shop">Home</Nav.Link>
-            <Nav.Link href="/login">Login</Nav.Link>
-            <Nav.Link href="/register">Register</Nav.Link>
+            <Login />
             <Nav.Link href="/about">Browse Listings</Nav.Link>
           </Nav>
         </Navbar.Collapse>
