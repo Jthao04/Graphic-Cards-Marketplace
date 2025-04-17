@@ -15,10 +15,8 @@ function AppNavbar() {
             <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             <Nav.Link as={Link} to="/sell">Sell GPU</Nav.Link>
-            <Nav.Link as={Link} to="/login">Login</Nav.Link>
-            <Nav.Link as={Link} to="/register">Register</Nav.Link>
-            <Login />
             <Nav.Link as={Link} to="/about">Browse Listings</Nav.Link>
+            <Login />
           </Nav>
         </Navbar.Collapse>
       </Container>
