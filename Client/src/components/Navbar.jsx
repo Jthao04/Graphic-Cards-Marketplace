@@ -1,11 +1,24 @@
-const Navbar = () => {
-    return (
-      <nav className="p-4 bg-gray-800 text-white">
-        <h1 className="text-2xl font-bold">GPU Marketplace</h1>
-      </nav>
-    );
-  };
-  
-  export default Navbar;
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Navbar, Nav, Container } from 'react-bootstrap';
+function AppNavbar() {
+  return (
+    <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
+      <Container>
+        <Navbar.Brand href="/">Grahpics Card Marketplace</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="ms-auto">
+            <Nav.Link href="/">Dashboard</Nav.Link>
+            <Nav.Link href="/shop">Home</Nav.Link>
+            <Nav.Link href="/login">Login</Nav.Link>
+            <Nav.Link href="/register">Register</Nav.Link>
+            <Nav.Link href="/about">Browse Listings</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+}
 
-  //this is just a placeholder, as I havent worked on the nav bar.
+export default AppNavbar;
