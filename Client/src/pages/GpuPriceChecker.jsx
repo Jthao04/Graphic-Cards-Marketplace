@@ -13,9 +13,11 @@ const GpuPriceChecker = () => {
   const [sellerPrice, setSellerPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Nvidia');
-  // default to "New"
-  const [gpuCondition, setGpuCondition] = useState('New'); 
+  const [gpuCondition, setGpuCondition] = useState('New'); // default to "New"
   const [image, setImage] = useState(null);
+
+  // Use VITE_API_URL from environment variables
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -43,7 +45,7 @@ const GpuPriceChecker = () => {
 
       const newTimeout = setTimeout(() => {
         setLoading(true);
-        fetch(`/api/price?query=${encodeURIComponent(value)}`)
+        fetch(`${apiUrl}/price?query=${encodeURIComponent(value)}`)
           .then(res => res.json())
           .then(data => {
             setHasSearched(true);
@@ -84,7 +86,7 @@ const GpuPriceChecker = () => {
     if (image) formData.append('image', image);
 
     try {
-      const res = await fetch('/api/gpus', {
+      const res = await fetch(`${apiUrl}/gpus`, {
         method: 'POST',
         body: formData,
       });
@@ -157,11 +159,11 @@ const GpuPriceChecker = () => {
         </div>
 
         <div>
-        <label>Condition:</label>
-        <select value={gpuCondition} onChange={(e) => setGpuCondition(e.target.value)}>
-          <option value="New">New</option>
-          <option value="Used">Used</option>
-        </select>
+          <label>Condition:</label>
+          <select value={gpuCondition} onChange={(e) => setGpuCondition(e.target.value)}>
+            <option value="New">New</option>
+            <option value="Used">Used</option>
+          </select>
         </div>
 
         <div>

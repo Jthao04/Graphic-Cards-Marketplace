@@ -7,10 +7,12 @@ const Login = () => {
     const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
     const [registerInfo, setRegisterInfo] = useState({ username: "", email: "", password: "" });
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:3001/api/auth/register", {
+            const response = await fetch(`${apiUrl}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(registerInfo),
@@ -30,7 +32,7 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch("http://localhost:3001/api/auth/login", {
+            const response = await fetch(`${apiUrl}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(loginInfo),
