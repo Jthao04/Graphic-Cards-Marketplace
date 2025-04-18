@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext'; // ✅ import context
+import { useAuth } from '../context/AuthContext'; 
 
 const GpuPriceChecker = () => {
-  const { user } = useAuth(); // ✅ get logged-in user
+  const { user } = useAuth(); 
 
   const [gpuName, setGpuName] = useState('');
   const [price, setPrice] = useState(null);
@@ -87,7 +87,7 @@ const GpuPriceChecker = () => {
     formData.append('category', category);
     formData.append('condition', gpuCondition);
     formData.append('sellerPrice', sellerPrice);
-    formData.append('userId', user._id); // ✅ add the actual user ID
+    formData.append('userId', user._id); 
     if (image) formData.append('image', image);
 
     try {
@@ -96,7 +96,15 @@ const GpuPriceChecker = () => {
         body: formData,
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error("Error parsing server response:", text);
+        alert("Invalid response from server.");
+        return;
+      }
 
       if (res.ok) {
         alert('GPU listing submitted successfully!');
