@@ -1,3 +1,4 @@
+// filepath: [Server.js](http://_vscodecontentref_/0)
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/connection.js';
@@ -15,8 +16,14 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'https://graphic-cards-marketplace-1.onrender.com' })); // Removed trailing slash
+app.use(cors({ origin: '*' })); // Allow all origins temporarily for debugging
 app.use(express.json());
+
+// Log incoming requests for debugging
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
