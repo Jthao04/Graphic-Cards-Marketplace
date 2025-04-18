@@ -20,17 +20,7 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(registerInfo),
       });
-
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (error) {
-        console.error("Error parsing server response:", text);
-        alert("Invalid response from server.");
-        return;
-      }
-
+      const data = await response.json();
       if (response.ok) {
         alert("Registration successful! You can now log in.");
         setShowRegister(false);
