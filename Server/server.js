@@ -15,7 +15,11 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'https://graphic-cards-marketplace-1.onrender.com' })); // Replace with your frontend's deployed domain
+const corsOptions = {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+};
+  
+app.use(cors(corsOptions)); // CORS configuration
 app.use(express.json());
 
 // Log incoming requests for debugging
