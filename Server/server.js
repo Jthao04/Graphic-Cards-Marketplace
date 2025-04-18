@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'https://graphic-cards-marketplace-1.onrender.com/' }));
+app.use(cors({ origin: 'https://graphic-cards-marketplace-1.onrender.com' })); // Removed trailing slash
 app.use(express.json());
 
 // Serve uploaded images statically
