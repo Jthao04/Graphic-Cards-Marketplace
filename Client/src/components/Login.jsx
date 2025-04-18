@@ -23,7 +23,17 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(registerInfo),
       });
-      const data = await response.json();
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error("Error parsing server response:", text);
+        alert("Invalid response from server.");
+        return;
+      }
+
       if (response.ok) {
         alert("Registration successful! You can now log in.");
         setShowRegister(false);
@@ -43,7 +53,17 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginInfo),
       });
-      const data = await response.json();
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error("Error parsing server response:", text);
+        alert("Invalid response from server.");
+        return;
+      }
+
       if (response.ok) {
         alert("Login successful!");
         setShowLogin(false);
