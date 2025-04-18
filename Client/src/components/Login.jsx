@@ -45,7 +45,7 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${apiUrl}/auth/login`, {
+      const response = await fetch(`${apiUrl}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginInfo),
