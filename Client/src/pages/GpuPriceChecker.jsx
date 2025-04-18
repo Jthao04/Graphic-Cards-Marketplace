@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext'; // ✅ import context
 
 const GpuPriceChecker = () => {
+  const { user } = useAuth(); // ✅ get logged-in user
+
   const [gpuName, setGpuName] = useState('');
   const [price, setPrice] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -9,14 +12,12 @@ const GpuPriceChecker = () => {
   const [countdown, setCountdown] = useState(null);
   const [intervalId, setIntervalId] = useState(null);
 
-  // Seller input states
   const [sellerPrice, setSellerPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Nvidia');
-  const [gpuCondition, setGpuCondition] = useState('New'); // default to "New"
+  const [gpuCondition, setGpuCondition] = useState('New');
   const [image, setImage] = useState(null);
 
-  // Use VITE_API_URL from environment variables
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleInputChange = (e) => {
@@ -37,9 +38,7 @@ const GpuPriceChecker = () => {
       const newInterval = setInterval(() => {
         seconds -= 1;
         setCountdown(seconds);
-        if (seconds === 0) {
-          clearInterval(newInterval);
-        }
+        if (seconds === 0) clearInterval(newInterval);
       }, 1000);
       setIntervalId(newInterval);
 
@@ -77,12 +76,18 @@ const GpuPriceChecker = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user) {
+      alert("You must be logged in to post a listing.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append('gpuName', gpuName);
     formData.append('description', description);
     formData.append('category', category);
     formData.append('condition', gpuCondition);
     formData.append('sellerPrice', sellerPrice);
+    formData.append('userId', user._id); // ✅ add the actual user ID
     if (image) formData.append('image', image);
 
     try {
@@ -95,7 +100,6 @@ const GpuPriceChecker = () => {
 
       if (res.ok) {
         alert('GPU listing submitted successfully!');
-        // Optionally reset form
         setGpuName('');
         setPrice(null);
         setDescription('');
