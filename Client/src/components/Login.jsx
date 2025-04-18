@@ -35,31 +35,31 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-        const response = await fetch(`${apiUrl}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(loginInfo),
-        });
+      const response = await fetch(`${apiUrl}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginInfo),
+      });
 
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.setItem("token", data.token); // Store the token in localStorage
-                alert("Login successful!");
-                setShowLogin(false);
-            } else {
-                alert(`Login failed: ${data.message}`);
-            }
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem("token", data.token); // Store the token in localStorage
+          alert("Login successful!");
+          setShowLogin(false);
         } else {
-            const text = await response.text();
-            console.error("Unexpected response format:", text);
-            alert("An unexpected error occurred.");
+          alert(`Login failed: ${data.message}`);
         }
+      } else {
+        const text = await response.text();
+        console.error("Unexpected response format:", text);
+        alert("An unexpected error occurred.");
+      }
     } catch (error) {
-        alert(`An error occurred: ${error.message}`);
+      alert(`An error occurred: ${error.message}`);
     }
-};
+  };
 
   return (
     <>
