@@ -1,4 +1,3 @@
-// filepath: [Server.js](http://_vscodecontentref_/0)
 import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/connection.js';
@@ -16,7 +15,7 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: '*' })); // Allow all origins temporarily for debugging
+app.use(cors({ origin: 'https://graphic-cards-marketplace-1.onrender.com' })); // Replace with your frontend's deployed domain
 app.use(express.json());
 
 // Log incoming requests for debugging
@@ -32,6 +31,11 @@ app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/price', priceRoutes);
 app.use('/api/gpus', gpuRoutes);
+
+// Handle invalid API routes
+app.use('/api/*', (req, res) => {
+    res.status(404).json({ error: 'API route not found' });
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
