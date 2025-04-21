@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/authcontext';
+import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 const GpuPriceChecker = () => {
