@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";  // import useNavigate for navigation
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [myListings, setMyListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();  // useNavigate hook for page navigation
 
   useEffect(() => {
     const fetchMyListings = async () => {
@@ -64,6 +66,11 @@ const Dashboard = () => {
     }
   };
 
+  const handleEdit = (id) => {
+    // Navigate to the Edit Listing page, passing the listing ID as a parameter
+    navigate(`/edit-listing/${id}`);
+  };
+
   if (loading) {
     return <div className="p-6">Loading your listings...</div>;
   }
@@ -82,15 +89,20 @@ const Dashboard = () => {
               className="bg-white shadow-md rounded-lg overflow-hidden"
             >
               <img
-                src={gpu.image || "/gpu-placeholder.jpg"} //
-                alt={gpu.title}
+                src={gpu.image || "/gpu-placeholder.jpg"} 
+                alt={gpu.gpuName}
                 className="h-48 w-full object-cover"
               />
               <div className="p-4">
-                <h2 className="text-xl font-semibold">{gpu.title}</h2>
-                <p className="text-gray-700">${gpu.price}</p>
+                <h2 className="text-xl font-semibold">{gpu.gpuName}</h2>
+                <p className="text-gray-700">${gpu.sellerPrice}</p>
                 <div className="flex justify-end gap-4 mt-4 text-sm">
-                  <button className="text-blue-500 hover:underline">Edit</button>
+                  <button
+                    onClick={() => handleEdit(gpu._id)} // Add onClick to edit the listing
+                    className="text-blue-500 hover:underline"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => handleDelete(gpu._id)}
                     className="text-red-500 hover:underline"

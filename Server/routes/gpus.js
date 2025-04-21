@@ -4,6 +4,28 @@ import GpuListing from '../models/GpuListing.js';
 
 const router = express.Router();
 
+// PUT route for updating a GPU listing
+router.put('/:id', async (req, res) => {
+  try {
+    const { gpuName, description, category, sellerPrice, condition } = req.body;
+
+    const updatedListing = await GpuListing.findByIdAndUpdate(
+      req.params.id,
+      { gpuName, description, category, sellerPrice, condition },
+      { new: true }  // Return the updated listing
+    );
+
+    if (!updatedListing) {
+      return res.status(404).json({ error: 'Listing not found' });
+    }
+
+    res.status(200).json(updatedListing);
+  } catch (err) {
+    console.error('Error updating listing:', err);
+    res.status(500).json({ error: 'Server error while updating listing' });
+  }
+});
+
 // Get all GPU listings and populate the user's email
 router.get('/', async (req, res) => {
   try {
