@@ -19,6 +19,7 @@ const GpuPriceChecker = () => {
   const [category, setCategory] = useState('Nvidia');
   const [gpuCondition, setGpuCondition] = useState('New');
   const [image, setImage] = useState(null);
+  const [imageBase64, setImageBase64] = useState('');
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -70,19 +71,26 @@ const GpuPriceChecker = () => {
     }
   };
 
+  // Convert image file to base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImageBase64(reader.result.split(',')[1]); // Get base64 string (remove the data URL prefix)
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!user) {
       alert('You must be logged in to post a listing.');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('gpuName', gpuName);
     formData.append('description', description);
@@ -90,17 +98,21 @@ const GpuPriceChecker = () => {
     formData.append('condition', gpuCondition);
     formData.append('sellerPrice', sellerPrice);
     formData.append('userId', user._id);
-    if (image) formData.append('image', image);
-  
+    
+    if (imageBase64) {
+      formData.append('imageData', imageBase64); // Send base64 image
+      formData.append('imageType', image.type); // Send the MIME type
+    }
+
     try {
       const res = await fetch(`${apiUrl}/api/gpus`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem("token")}`, // Add token if available
+          'Authorization': `Bearer ${localStorage.getItem("token")}`, 
         },
         body: formData,
       });
-  
+
       const text = await res.text();
       let data;
       try {
@@ -110,7 +122,7 @@ const GpuPriceChecker = () => {
         alert('Invalid response from server.');
         return;
       }
-  
+
       if (res.ok) {
         alert('GPU listing submitted successfully!');
         setGpuName('');
@@ -119,6 +131,7 @@ const GpuPriceChecker = () => {
         setCategory('Nvidia');
         setSellerPrice('');
         setImage(null);
+        setImageBase64(''); 
         setHasSearched(false);
       } else {
         alert(`Submission failed: ${data.error}`);
