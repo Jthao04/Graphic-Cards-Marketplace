@@ -82,7 +82,7 @@ const Dashboard = () => {
               className="bg-white shadow-md rounded-lg overflow-hidden"
             >
               <img
-                src={gpu.image || "/gpu-placeholder.jpg"} // ✅ Ensure this image is in your /public folder
+                src={gpu.image || "/gpu-placeholder.jpg"} //
                 alt={gpu.title}
                 className="h-48 w-full object-cover"
               />
