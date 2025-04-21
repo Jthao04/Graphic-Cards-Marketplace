@@ -44,7 +44,7 @@ const GpuPriceChecker = () => {
 
       const newTimeout = setTimeout(() => {
         setLoading(true);
-        fetch(`${apiUrl}/price?query=${encodeURIComponent(value)}`)
+        fetch(`${apiUrl}/api/price?query=${encodeURIComponent(value)}`)
           .then(res => res.json())
           .then(data => {
             setHasSearched(true);
