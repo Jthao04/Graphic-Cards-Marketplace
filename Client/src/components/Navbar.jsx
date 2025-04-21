@@ -19,13 +19,13 @@ function AppNavbar() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <Nav.Link as={Link} to="/">Home</Nav.Link>
-              <Nav.Link as={Link} to="/create">Sell GPU</Nav.Link>
+              <Nav.Link as={Link} to="/sell">Sell GPU</Nav.Link>
               <Nav.Link as={Link} to="/listings">Browse Listings</Nav.Link>
 
               {user ? (
                 <>
                   <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
-                  <Nav.Link as={Link} to="/create">Sell GPU</Nav.Link>
+                  <Nav.Link as={Link} to="/sell">Sell GPU</Nav.Link>
                   <Nav.Link onClick={logout}>Logout</Nav.Link>
                 </>
               ) : (
