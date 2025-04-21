@@ -52,12 +52,13 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginInfo),
       });
-
+  
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const data = await response.json();
         if (response.ok) {
-          login(data.user); // Set user in AuthContext + localStorage
+          localStorage.setItem("token", data.token); // Store the token in localStorage
+          login(data.user); // Set user in AuthContext
           alert("Login successful!");
           setShowLogin(false);
         } else {
