@@ -1,7 +1,6 @@
 import React from 'react';
 
 const GpuCard = ({ gpu }) => {
-  // Define a map for category images
   const categoryImages = {
     Nvidia: '/assets/NvidiaGpuImg.jpeg',
     AMD: '/assets/AMDGpuImg.jpg',
@@ -9,7 +8,7 @@ const GpuCard = ({ gpu }) => {
   };
 
   // Select the appropriate image based on the category
-  const imageSrc = categoryImages[gpu.category] || '/assets/defaultGpuImg.jpg';  // Fallback image if no match
+  const imageSrc = categoryImages[gpu.category] || '/assets/defaultGpuImg.jpg'; 
 
   return (
     <div className="border rounded-lg p-4 shadow-md bg-white">
@@ -19,7 +18,6 @@ const GpuCard = ({ gpu }) => {
       <p className="text-gray-700 mb-1"><strong>Category:</strong> {gpu.category}</p>
       <p className="text-gray-700 mb-2"><strong>Description:</strong> {gpu.description}</p>
 
-      {/* Display the image based on the category */}
       <img
         src={imageSrc}
         alt={`${gpu.category} GPU`}
