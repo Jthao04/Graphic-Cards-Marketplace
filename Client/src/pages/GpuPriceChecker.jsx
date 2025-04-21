@@ -120,9 +120,6 @@ const GpuPriceChecker = () => {
         setSellerPrice('');
         setImage(null);
         setHasSearched(false);
-
-        // Redirect to the dashboard after successful submission
-        navigate('/dashboard');
       } else {
         alert(`Submission failed: ${data.error}`);
       }
@@ -130,7 +127,7 @@ const GpuPriceChecker = () => {
       console.error('Error submitting listing:', error);
       alert('An error occurred while submitting the listing.');
     }
-  };  
+  };
 
   return (
     <div style={{ marginBottom: '2rem' }}>
