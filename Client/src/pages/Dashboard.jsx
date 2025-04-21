@@ -1,18 +1,21 @@
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/authcontext";
+
 const Dashboard = () => {
-  const { user } = useAuth(); // Assuming you have an AuthContext for user authentication
+  const { user } = useAuth();
   const [myListings, setMyListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMyListings = async () => {
       try {
-        const token = localStorage.getItem("token"); // Retrieve the token from localStorage
-        const apiUrl = import.meta.env.VITE_API_URL; // Use the environment variable for the backend URL
+        const token = localStorage.getItem("token");
+        const apiUrl = import.meta.env.VITE_API_URL;
 
         const response = await fetch(`${apiUrl}/api/listings/user`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -21,7 +24,7 @@ const Dashboard = () => {
         }
 
         const data = await response.json();
-        setMyListings(data); // Update state with the user's listings
+        setMyListings(data);
       } catch (error) {
         console.error("Error fetching user listings:", error);
       } finally {
@@ -35,11 +38,11 @@ const Dashboard = () => {
   }, [user]);
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm("Delete this listing?");
-    if (confirm) {
+    const confirmDelete = window.confirm("Delete this listing?");
+    if (confirmDelete) {
       try {
         const token = localStorage.getItem("token");
-        const apiUrl = import.meta.env.VITE_API_URL; // Use the environment variable for the backend URL
+        const apiUrl = import.meta.env.VITE_API_URL;
 
         const response = await fetch(`${apiUrl}/api/listings/${id}`, {
           method: "DELETE",
@@ -75,11 +78,11 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {myListings.map((gpu) => (
             <div
-              key={gpu._id} // Use MongoDB's _id as the key
+              key={gpu._id}
               className="bg-white shadow-md rounded-lg overflow-hidden"
             >
               <img
-                src={gpu.image || "gpu-placeholder.jpg"} // Fallback image if none is provided
+                src={gpu.image || "/gpu-placeholder.jpg"} // ✅ Ensure this image is in your /public folder
                 alt={gpu.title}
                 className="h-48 w-full object-cover"
               />
