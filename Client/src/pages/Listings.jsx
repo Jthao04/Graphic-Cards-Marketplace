@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import GpuCard from "../components/GpuCard";
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const Listings = () => {
