@@ -4,9 +4,11 @@ import connectDB from './config/connection.js';
 import authRoutes from './routes/authRoutes.js';
 import priceRoutes from './routes/priceRoutes.js';
 import gpuRoutes from './routes/gpus.js';
-import listingsRoutes from './routes/listingsRoutes.js'; // Import listingsRoutes
+import listingsRoutes from './routes/listingsRoutes.js'; 
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs'; 
+import mime from 'mime'; 
 
 dotenv.config();
 
@@ -33,11 +35,23 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve uploaded images statically with CORS applied
-app.use('/uploads', cors(corsOptions), express.static(path.join(process.cwd(), 'uploads')));
+// Serve uploaded images with CORS headers 
+app.use('/uploads', (req, res, next) => {
+    const filePath = path.join(process.cwd(), 'uploads', req.path);
+
+    if (fs.existsSync(filePath)) {
+        const mimeType = mime.getType(filePath);
+        res.setHeader('Content-Type', mimeType || 'application/octet-stream');
+        res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || 'http://localhost:3000');
+        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+        fs.createReadStream(filePath).pipe(res);
+    } else {
+        res.status(404).send('File not found');
+    }
+});
 
 // Routes
-app.use('/api/listings', listingsRoutes); // Mount listingsRoutes
+app.use('/api/listings', listingsRoutes); 
 app.use('/api/auth', authRoutes);
 app.use('/api/price', priceRoutes);
 app.use('/api/gpus', gpuRoutes);
