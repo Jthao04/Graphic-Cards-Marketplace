@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { useAuth } from "../context/AuthContext"; // ✅ Import useAuth
+import { useAuth } from "../context/AuthContext"; // Import useAuth
 
 const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
@@ -10,7 +10,7 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
     password: "",
   });
 
-  const { login } = useAuth(); // ✅ Destructure login from AuthContext
+  const { login } = useAuth(); // Destructure login from AuthContext
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -57,7 +57,7 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
       if (contentType && contentType.includes("application/json")) {
         const data = await response.json();
         if (response.ok) {
-          login(data.user); // ✅ Set user in AuthContext + localStorage
+          login(data.user); // Set user in AuthContext + localStorage
           alert("Login successful!");
           setShowLogin(false);
         } else {
