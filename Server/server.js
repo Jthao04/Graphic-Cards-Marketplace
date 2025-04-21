@@ -33,8 +33,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve uploaded images statically with CORS applied
-app.use('/uploads', cors(corsOptions), express.static(path.join(process.cwd(), 'uploads')));
+app.use('/uploads', (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", process.env.CORS_ORIGIN);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  }, express.static(path.join(process.cwd(), 'uploads')));
+  
 
 // Routes
 app.use('/api/listings', listingsRoutes); // Mount listingsRoutes
