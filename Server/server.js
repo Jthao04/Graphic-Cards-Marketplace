@@ -15,12 +15,16 @@ connectDB();
 
 const app = express();
 
-// Middleware
+// Middleware for CORS
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN || 'http://localhost:3000', 
+    methods: ['GET', 'POST', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
 };
 
-app.use(cors(corsOptions)); // CORS configuration
+// Apply CORS for all routes
+app.use(cors(corsOptions)); 
+
 app.use(express.json());
 
 // Log incoming requests for debugging
@@ -29,8 +33,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve uploaded images statically
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+// Serve uploaded images statically with CORS applied
+app.use('/uploads', cors(corsOptions), express.static(path.join(process.cwd(), 'uploads')));
 
 // Routes
 app.use('/api/listings', listingsRoutes); // Mount listingsRoutes
