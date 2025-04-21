@@ -75,12 +75,12 @@ const GpuPriceChecker = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!user) {
       alert("You must be logged in to post a listing.");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('gpuName', gpuName);
     formData.append('description', description);
@@ -89,13 +89,16 @@ const GpuPriceChecker = () => {
     formData.append('sellerPrice', sellerPrice);
     formData.append('userId', user._id); 
     if (image) formData.append('image', image);
-
+  
     try {
       const res = await fetch(`${apiUrl}/gpus`, {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`, // Add token if available
+        },
         body: formData,
       });
-
+  
       const text = await res.text();
       let data;
       try {
@@ -105,7 +108,7 @@ const GpuPriceChecker = () => {
         alert("Invalid response from server.");
         return;
       }
-
+  
       if (res.ok) {
         alert('GPU listing submitted successfully!');
         setGpuName('');
@@ -122,7 +125,7 @@ const GpuPriceChecker = () => {
       console.error('Error submitting listing:', error);
       alert('An error occurred while submitting the listing.');
     }
-  };
+  };  
 
   return (
     <div style={{ marginBottom: '2rem' }}>
