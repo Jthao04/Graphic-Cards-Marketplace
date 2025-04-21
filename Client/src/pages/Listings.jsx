@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import GpuCard from "../components/GpuCard"; // You'll make this next!
+import GpuCard from "../components/GpuCard";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Listings = () => {
   const [listings, setListings] = useState([]);
@@ -8,8 +9,7 @@ const Listings = () => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        // Replace this with your backend API call later
-        const response = await fetch("/api/listings"); 
+        const response = await fetch(`${apiUrl}/api/gpus`);
         const data = await response.json();
         setListings(data);
       } catch (error) {
@@ -33,7 +33,7 @@ const Listings = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {listings.map((gpu) => (
-            <GpuCard key={gpu.id} gpu={gpu} />
+            <GpuCard key={gpu._id} gpu={gpu} />
           ))}
         </div>
       )}

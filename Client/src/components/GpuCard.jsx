@@ -1,24 +1,20 @@
-import React from "react";
-import { Link } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const GpuCard = ({ gpu }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden">
-      <img
-        src={gpu.image || "gpu-placeholder.jpg"}
-        alt={gpu.title}
-        className="h-48 w-full object-cover"
-      />
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-1">{gpu.title}</h2>
-        <p className="text-gray-700 mb-2">${gpu.price}</p>
-        <Link
-          to={`/listings/${gpu.id}`}
-          className="text-indigo-600 hover:underline text-sm"
-        >
-          View Details
-        </Link>
-      </div>
+    <div className="border rounded-lg p-4 shadow-md bg-white">
+      <h2 className="text-xl font-semibold mb-2">{gpu.gpuName}</h2>
+      <p className="text-gray-700 mb-1"><strong>Price:</strong> ${gpu.sellerPrice}</p>
+      <p className="text-gray-700 mb-1"><strong>Condition:</strong> {gpu.condition}</p>
+      <p className="text-gray-700 mb-1"><strong>Category:</strong> {gpu.category}</p>
+      <p className="text-gray-600 text-sm mb-2">{gpu.description}</p>
+      {gpu.imageUrl && (
+        <img
+          src={`${apiUrl}${gpu.imageUrl}`}
+          alt={gpu.gpuName}
+          className="w-full h-48 object-cover rounded"
+        />
+      )}
     </div>
   );
 };

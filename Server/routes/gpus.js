@@ -4,6 +4,17 @@ import GpuListing from '../models/GpuListing.js';
 
 const router = express.Router();
 
+// Get all GPU listings
+router.get('/', async (req, res) => {
+  try {
+    const listings = await GpuListing.find().sort({ createdAt: -1 }); // Most recent first
+    res.status(200).json(listings);
+  } catch (err) {
+    console.error('Error fetching listings:', err);
+    res.status(500).json({ error: 'Server error while fetching listings' });
+  }
+});
+
 // File storage to 'uploads/' directory
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
