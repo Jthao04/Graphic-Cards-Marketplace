@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/connection.js';
 import authRoutes from './routes/authRoutes.js';
 import priceRoutes from './routes/priceRoutes.js';
-import gpuRoutes from './routes/gpus.js'; 
+import gpuRoutes from './routes/gpus.js';
+import listingsRoutes from './routes/listingsRoutes.js'; // Import listingsRoutes
 import cors from 'cors';
 import path from 'path';
 
@@ -18,7 +19,7 @@ const app = express();
 const corsOptions = {
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
 };
-  
+
 app.use(cors(corsOptions)); // CORS configuration
 app.use(express.json());
 
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Routes
+app.use('/api/listings', listingsRoutes); // Mount listingsRoutes
 app.use('/api/auth', authRoutes);
 app.use('/api/price', priceRoutes);
 app.use('/api/gpus', gpuRoutes);
