@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import { useAuth } from "../context/AuthContext"; // Import useAuth
 
 const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
@@ -9,8 +10,9 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
     password: "",
   });
 
+  const { login } = useAuth(); // Destructure login from AuthContext
+
   const apiUrl = import.meta.env.VITE_API_URL;
-  console.log("API URL:", apiUrl); // Verify the API URL
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -55,7 +57,7 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
       if (contentType && contentType.includes("application/json")) {
         const data = await response.json();
         if (response.ok) {
-          localStorage.setItem("token", data.token); // Store the token in localStorage
+          login(data.user); // Set user in AuthContext + localStorage
           alert("Login successful!");
           setShowLogin(false);
         } else {
@@ -147,7 +149,10 @@ const Login = ({ showLogin, setShowLogin, showRegister, setShowRegister }) => {
                 placeholder="Password"
                 value={registerInfo.password}
                 onChange={(e) =>
-                  setRegisterInfo({ ...registerInfo, password: e.target.value })
+                  setRegisterInfo({
+                    ...registerInfo,
+                    password: e.target.value,
+                  })
                 }
                 required
               />
