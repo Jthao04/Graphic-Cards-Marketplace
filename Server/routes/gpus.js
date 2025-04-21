@@ -15,17 +15,11 @@ router.get('/', async (req, res) => {
   }
 });
 
-// File storage to 'uploads/' directory
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname)
-  }
-});
+// Use memory storage to handle image in memory (no file saving to disk)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// POST route for creating a new GPU listing
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { gpuName, description, category, sellerPrice, condition, userId } = req.body;
@@ -35,13 +29,23 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'User ID is required to post a listing.' });
     }
 
+    // If an image is uploaded, convert the image file to base64
+    let imageData = null;
+    let imageType = null;
+
+    if (req.file) {
+      imageData = req.file.buffer.toString('base64');  
+      imageType = req.file.mimetype;  
+    }
+
     const newListing = new GpuListing({
       gpuName,
       description,
       category,
       condition,
       sellerPrice,
-      imageUrl: req.file ? `/uploads/${req.file.filename}` : null,
+      imageData,  // Store base64 image data
+      imageType,  // Store MIME type
       userId
     });
 
