@@ -210,6 +210,7 @@ const GpuPriceChecker = () => {
           />
         </div>
 
+        {/* Not Working As Intended For Now
         <div>
           <label>Upload Image:</label>
           <br />
@@ -220,7 +221,8 @@ const GpuPriceChecker = () => {
             required
           />
         </div>
-
+        */}
+        
         <button type="submit" style={{ marginTop: '1rem' }}>
           Submit
         </button>
