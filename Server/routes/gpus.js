@@ -7,11 +7,23 @@ const router = express.Router();
 // Get all GPU listings and populate the user's email
 router.get('/', async (req, res) => {
   try {
-    const listings = await GpuListing.find()
-      .populate('userId', 'email')  // Populate userId field with email
-      .sort({ createdAt: -1 });     // Sort by most recent first
+    const { category, condition } = req.query; 
 
-    res.status(200).json(listings);
+    // Build filter object
+    let filter = {};
+    if (category) {
+      filter.category = category; 
+    }
+    if (condition) {
+      filter.condition = condition; 
+    }
+
+    // Fetch listings with filters and populate the user's email
+    const listings = await GpuListing.find(filter)
+      .populate('userId', 'email')  
+      .sort({ createdAt: -1 });     
+
+    res.status(200).json(listings);  
   } catch (err) {
     console.error('Error fetching listings:', err);
     res.status(500).json({ error: 'Server error while fetching listings' });
@@ -31,7 +43,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'User ID is required to post a listing.' });
     }
 
-    // If an image is uploaded convert the image file to base64
+    // If an image is uploaded, convert the image file to base64
     let imageData = null;
     let imageType = null;
 
