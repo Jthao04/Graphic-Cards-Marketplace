@@ -1,29 +1,68 @@
-import React, { useState } from "react";
-
-const mockListings = [
-  {
-    id: 1,
-    title: "GeForce RTX 3080",
-    price: 699,
-    image: "gpu-placeholder.jpg",
-  },
-  {
-    id: 2,
-    title: "AMD Radeon RX 6800",
-    price: 549,
-    image: "gpu-placeholder.jpg",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Assuming you have an AuthContext for user authentication
 
 const Dashboard = () => {
-  const [myListings, setMyListings] = useState(mockListings);
+  const { user } = useAuth(); // Get the logged-in user from context
+  const [myListings, setMyListings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = (id) => {
+  useEffect(() => {
+    const fetchMyListings = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Retrieve the token from localStorage
+        const response = await fetch("/api/listings/user", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch listings");
+        }
+
+        const data = await response.json();
+        setMyListings(data); // Update state with the user's listings
+      } catch (error) {
+        console.error("Error fetching user listings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      fetchMyListings();
+    }
+  }, [user]);
+
+  const handleDelete = async (id) => {
     const confirm = window.confirm("Delete this listing?");
     if (confirm) {
-      setMyListings((prev) => prev.filter((listing) => listing.id !== id));
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(`/api/listings/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete listing");
+        }
+
+        setMyListings((prev) => prev.filter((listing) => listing._id !== id));
+        alert("Listing deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting listing:", error);
+        alert("Failed to delete listing.");
+      }
     }
   };
+
+  if (loading) {
+    return <div className="p-6">Loading your listings...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -35,11 +74,11 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {myListings.map((gpu) => (
             <div
-              key={gpu.id}
+              key={gpu._id} // Use MongoDB's _id as the key
               className="bg-white shadow-md rounded-lg overflow-hidden"
             >
               <img
-                src={gpu.image}
+                src={gpu.image || "gpu-placeholder.jpg"} // Fallback image if none is provided
                 alt={gpu.title}
                 className="h-48 w-full object-cover"
               />
@@ -49,7 +88,7 @@ const Dashboard = () => {
                 <div className="flex justify-end gap-4 mt-4 text-sm">
                   <button className="text-blue-500 hover:underline">Edit</button>
                   <button
-                    onClick={() => handleDelete(gpu.id)}
+                    onClick={() => handleDelete(gpu._id)}
                     className="text-red-500 hover:underline"
                   >
                     Delete
