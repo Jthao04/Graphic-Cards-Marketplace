@@ -8,12 +8,13 @@ const GpuCard = ({ gpu }) => {
       <p className="text-gray-700 mb-1"><strong>Condition:</strong> {gpu.condition}</p>
       <p className="text-gray-700 mb-1"><strong>Category:</strong> {gpu.category}</p>
       <p className="text-gray-700 mb-2"><strong>Description:</strong> {gpu.description}</p>
+      
       {gpu.imageUrl && (
         <img
-        src={`${import.meta.env.VITE_API_URL}${gpu.imageUrl}`}
-        alt={gpu.gpuName}
-        className="w-full h-48 object-cover rounded"
-      />      
+          src={`${apiUrl}${gpu.imageUrl}`}
+          alt={gpu.gpuName}
+          className="w-full h-48 object-cover rounded"
+        />
       )}
     </div>
   );
