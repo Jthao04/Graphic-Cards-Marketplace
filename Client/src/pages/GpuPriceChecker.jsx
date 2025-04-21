@@ -91,7 +91,7 @@ const GpuPriceChecker = () => {
     if (image) formData.append('image', image);
   
     try {
-      const res = await fetch(`${apiUrl}/gpus`, {
+      const res = await fetch(`${apiUrl}/api/gpus`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem("token")}`, // Add token if available
