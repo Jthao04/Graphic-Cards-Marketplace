@@ -35,7 +35,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve uploaded images with CORS headers 
+// Serve uploaded images with CORS headers and correct content type
 app.use('/uploads', (req, res, next) => {
     const filePath = path.join(process.cwd(), 'uploads', req.path);
 
