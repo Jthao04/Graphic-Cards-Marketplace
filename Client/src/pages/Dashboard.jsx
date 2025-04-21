@@ -1,5 +1,8 @@
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext"; // Assuming you have an AuthContext for user authentication
+
 const Dashboard = () => {
-  const { user } = useAuth(); // Assuming you have an AuthContext for user authentication
+  const { user } = useAuth(); // Get the logged-in user from context
   const [myListings, setMyListings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -7,9 +10,7 @@ const Dashboard = () => {
     const fetchMyListings = async () => {
       try {
         const token = localStorage.getItem("token"); // Retrieve the token from localStorage
-        const apiUrl = import.meta.env.VITE_API_URL; // Use the environment variable for the backend URL
-
-        const response = await fetch(`${apiUrl}/api/listings/user`, {
+        const response = await fetch("https://graphic-cards-marketplace-fv13.onrender.com/api/listings/user", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
@@ -39,9 +40,7 @@ const Dashboard = () => {
     if (confirm) {
       try {
         const token = localStorage.getItem("token");
-        const apiUrl = import.meta.env.VITE_API_URL; // Use the environment variable for the backend URL
-
-        const response = await fetch(`${apiUrl}/api/listings/${id}`, {
+        const response = await fetch(`https://graphic-cards-marketplace-fv13.onrender.com/api/listings/${id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
