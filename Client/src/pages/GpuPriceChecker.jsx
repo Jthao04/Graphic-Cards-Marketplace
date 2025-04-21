@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 const GpuPriceChecker = () => {
-  const { user } = useAuth(); 
+  const { user } = useAuth();
+  const navigate = useNavigate(); // Initialize navigate for redirection
 
   const [gpuName, setGpuName] = useState('');
   const [price, setPrice] = useState(null);
@@ -45,8 +47,8 @@ const GpuPriceChecker = () => {
       const newTimeout = setTimeout(() => {
         setLoading(true);
         fetch(`${apiUrl}/price?query=${encodeURIComponent(value)}`)
-          .then(res => res.json())
-          .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             setHasSearched(true);
             if (data.averagePrice) {
               setPrice(data.averagePrice);
@@ -77,7 +79,7 @@ const GpuPriceChecker = () => {
     e.preventDefault();
 
     if (!user) {
-      alert("You must be logged in to post a listing.");
+      alert('You must be logged in to post a listing.');
       return;
     }
 
@@ -87,7 +89,7 @@ const GpuPriceChecker = () => {
     formData.append('category', category);
     formData.append('condition', gpuCondition);
     formData.append('sellerPrice', sellerPrice);
-    formData.append('userId', user._id); 
+    formData.append('userId', user._id);
     if (image) formData.append('image', image);
 
     try {
@@ -101,8 +103,8 @@ const GpuPriceChecker = () => {
       try {
         data = JSON.parse(text);
       } catch (error) {
-        console.error("Error parsing server response:", text);
-        alert("Invalid response from server.");
+        console.error('Error parsing server response:', text);
+        alert('Invalid response from server.');
         return;
       }
 
@@ -115,6 +117,9 @@ const GpuPriceChecker = () => {
         setSellerPrice('');
         setImage(null);
         setHasSearched(false);
+
+        // Redirect to the dashboard after successful submission
+        navigate('/dashboard');
       } else {
         alert(`Submission failed: ${data.error}`);
       }
@@ -129,7 +134,8 @@ const GpuPriceChecker = () => {
       <h3>Post a GPU for Sale</h3>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Graphics Card Name:</label><br />
+          <label>Graphics Card Name:</label>
+          <br />
           <input
             type="text"
             placeholder="e.g., RTX 4070 Ti"
@@ -149,7 +155,8 @@ const GpuPriceChecker = () => {
         )}
 
         <div>
-          <label>Description:</label><br />
+          <label>Description:</label>
+          <br />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -158,7 +165,8 @@ const GpuPriceChecker = () => {
         </div>
 
         <div>
-          <label>Category (Chipset):</label><br />
+          <label>Category (Chipset):</label>
+          <br />
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -179,7 +187,8 @@ const GpuPriceChecker = () => {
         </div>
 
         <div>
-          <label>Seller Price ($):</label><br />
+          <label>Seller Price ($):</label>
+          <br />
           <input
             type="number"
             value={sellerPrice}
@@ -189,7 +198,8 @@ const GpuPriceChecker = () => {
         </div>
 
         <div>
-          <label>Upload Image:</label><br />
+          <label>Upload Image:</label>
+          <br />
           <input
             type="file"
             accept="image/*"
@@ -198,7 +208,9 @@ const GpuPriceChecker = () => {
           />
         </div>
 
-        <button type="submit" style={{ marginTop: '1rem' }}>Submit</button>
+        <button type="submit" style={{ marginTop: '1rem' }}>
+          Submit
+        </button>
       </form>
     </div>
   );
