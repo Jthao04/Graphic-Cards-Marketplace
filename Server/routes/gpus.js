@@ -4,10 +4,13 @@ import GpuListing from '../models/GpuListing.js';
 
 const router = express.Router();
 
-// Get all GPU listings
+// Get all GPU listings and populate the user's email
 router.get('/', async (req, res) => {
   try {
-    const listings = await GpuListing.find().sort({ createdAt: -1 }); // Most recent first
+    const listings = await GpuListing.find()
+      .populate('userId', 'email')  // Populate userId field with email
+      .sort({ createdAt: -1 });     // Sort by most recent first
+
     res.status(200).json(listings);
   } catch (err) {
     console.error('Error fetching listings:', err);
@@ -15,7 +18,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Use memory storage to handle image in memory (no file saving to disk)
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -29,7 +31,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'User ID is required to post a listing.' });
     }
 
-    // If an image is uploaded, convert the image file to base64
+    // If an image is uploaded convert the image file to base64
     let imageData = null;
     let imageType = null;
 

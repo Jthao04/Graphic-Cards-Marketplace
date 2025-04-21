@@ -1,6 +1,7 @@
 import React from 'react';
 
 const GpuCard = ({ gpu }) => {
+  // Define a map for category images
   const categoryImages = {
     Nvidia: '/assets/NvidiaGpuImg.jpeg',
     AMD: '/assets/AMDGpuImg.jpg',
@@ -8,7 +9,7 @@ const GpuCard = ({ gpu }) => {
   };
 
   // Select the appropriate image based on the category
-  const imageSrc = categoryImages[gpu.category] || '/assets/defaultGpuImg.jpg'; 
+  const imageSrc = categoryImages[gpu.category] || '/assets/defaultGpuImg.jpg';
 
   return (
     <div className="border rounded-lg p-4 shadow-md bg-white">
@@ -21,8 +22,12 @@ const GpuCard = ({ gpu }) => {
       <img
         src={imageSrc}
         alt={`${gpu.category} GPU`}
-        className="w-full h-48 object-cover rounded"
+        className="w-full h-48 object-cover rounded mb-4"
       />
+
+      {gpu.userId && gpu.userId.email && (
+        <p className="text-gray-600 mt-2"><strong>Seller Email:</strong> {gpu.userId.email}</p>
+      )}
     </div>
   );
 };
