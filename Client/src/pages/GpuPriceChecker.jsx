@@ -11,17 +11,31 @@ const GpuPriceChecker = () => {
   const [gpuCondition, setGpuCondition] = useState('New');
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // Convert image file to base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    if (!file) {
+      console.warn('No file selected.');
+      return;
+    }
+
     setImage(file);
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImageBase64(reader.result.split(',')[1]); // Get base64 string
+      const base64String = reader.result.split(',')[1]; // Get base64 string
+      if (base64String) {
+        setImageBase64(base64String);
+      } else {
+        console.error('Failed to convert image to base64.');
+      }
+    };
+    reader.onerror = () => {
+      console.error('Error reading file.');
     };
     reader.readAsDataURL(file);
   };
@@ -34,6 +48,13 @@ const GpuPriceChecker = () => {
       return;
     }
 
+    if (!gpuName || !description || !category || !gpuCondition || !sellerPrice) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append('gpuName', gpuName);
     formData.append('description', description);
@@ -43,7 +64,7 @@ const GpuPriceChecker = () => {
 
     if (imageBase64) {
       formData.append('imageData', imageBase64); // Send base64 image
-      formData.append('imageType', image.type); // Send MIME type
+      formData.append('imageType', image?.type || ''); // Send MIME type
     }
 
     try {
@@ -66,11 +87,14 @@ const GpuPriceChecker = () => {
         setImageBase64('');
       } else {
         const data = await res.json();
+        console.error('Backend error:', data);
         alert(`Submission failed: ${data.error}`);
       }
     } catch (error) {
       console.error('Error submitting listing:', error);
       alert('An error occurred while submitting the listing.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -131,7 +155,9 @@ const GpuPriceChecker = () => {
           <label>Upload Image:</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit'}
+        </button>
       </form>
     </div>
   );
