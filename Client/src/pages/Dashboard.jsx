@@ -11,18 +11,18 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const apiUrl = import.meta.env.VITE_API_URL;
-
-        const response = await fetch(`${apiUrl}/api/listings/user`, {
+  
+        const response = await fetch(`${apiUrl}/api/gpus/user`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
+  
         if (!response.ok) {
           throw new Error("Failed to fetch listings");
         }
-
+  
         const data = await response.json();
         setMyListings(data);
       } catch (error) {
@@ -31,7 +31,7 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
+  
     if (user) {
       fetchMyListings();
     }
