@@ -70,4 +70,14 @@ router.post('/', verifyToken, upload.single('image'), async (req, res) => { // A
   }
 });
 
+
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const listings = await Gpu.find({ userId: req.params.userId });
+    res.json(listings);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 export default router;
