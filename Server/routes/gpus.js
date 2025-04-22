@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import GpuListing from '../models/GpuListing.js';
-import { verifyToken } from '../middleware/Authmiddleware.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
