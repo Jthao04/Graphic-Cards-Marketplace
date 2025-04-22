@@ -70,7 +70,6 @@ router.post('/', verifyToken, upload.single('image'), async (req, res) => { // A
   }
 });
 
-// Get user-specific GPU listings
 router.get('/user', verifyToken, async (req, res) => { // Add verifyToken middleware
   try {
     const userId = req.user._id; // Extract user ID from the token
@@ -81,5 +80,3 @@ router.get('/user', verifyToken, async (req, res) => { // Add verifyToken middle
     res.status(500).json({ error: 'Server error while fetching user listings' });
   }
 });
-
-export default router;
