@@ -8,18 +8,15 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// ✅ POST: Create a new GPU listing
 router.post('/', verifyToken, upload.single('image'), async (req, res) => {
   try {
     const { gpuName, description, category, sellerPrice, condition } = req.body;
 
-    // Check if the user is authenticated
     const userId = req.user.id; // Extracted from the token
     if (!userId) {
       return res.status(400).json({ error: 'User ID is required to post a listing.' });
     }
 
-    // If an image is uploaded, convert the image file to base64
     let imageData = null;
     let imageType = null;
 
@@ -28,15 +25,15 @@ router.post('/', verifyToken, upload.single('image'), async (req, res) => {
       imageType = req.file.mimetype; // Get MIME type
     }
 
-    // Create a new listing
-    const newListing = new Listing({
-      title: gpuName,
+    const newListing = new GpuListing({
+      gpuName,
       description,
       category,
-      price: sellerPrice,
       condition,
-      image: imageData ? `data:${imageType};base64,${imageData}` : undefined, // Save base64 image if provided
-      user: userId, // Associate the listing with the logged-in user
+      sellerPrice,
+      imageData,
+      imageType,
+      userId,
     });
 
     const savedListing = await newListing.save();
