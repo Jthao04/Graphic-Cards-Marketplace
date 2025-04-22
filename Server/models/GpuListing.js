@@ -6,14 +6,14 @@ const GpuListingSchema = new mongoose.Schema({
   category: { type: String, enum: ['Nvidia', 'AMD', 'Intel'], required: true },
   condition: { type: String, enum: ['New', 'Used'], required: true },
   sellerPrice: { type: Number, required: true },
-  imageData: { type: String }, // Base64 encoded image
-  imageType: { type: String }, // MIME type of the image (e.g., image/png)
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User model
-}, {
-  timestamps: true, // Automatically adds createdAt and updatedAt fields
-});
 
-// Add an index for performance
-GpuListingSchema.index({ userId: 1 });
+  // Store the base64 image data
+  imageData: { type: String },  // base64 encoded image
+  imageType: { type: String },  // type of the image (image/png, image/jpeg)
+  
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+}, {
+  timestamps: true,
+});
 
 export default mongoose.model('GpuListing', GpuListingSchema);
