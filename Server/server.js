@@ -4,7 +4,6 @@ import connectDB from './config/connection.js';
 import authRoutes from './routes/authRoutes.js';
 import priceRoutes from './routes/priceRoutes.js';
 import gpuRoutes from './routes/gpus.js';
-import listingsRoutes from './routes/listingsRoutes.js'; 
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs'; 
@@ -51,7 +50,6 @@ app.use('/uploads', (req, res, next) => {
 });
 
 // Routes
-app.use('/api/listings', listingsRoutes); 
 app.use('/api/auth', authRoutes);
 app.use('/api/price', priceRoutes);
 app.use('/api/gpus', gpuRoutes);
