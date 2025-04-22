@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,19 +7,13 @@ const GpuPriceChecker = () => {
   const navigate = useNavigate();
 
   const [gpuName, setGpuName] = useState('');
-  const [price, setPrice] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [countdown, setCountdown] = useState(null);
-  const [intervalId, setIntervalId] = useState(null);
-
   const [sellerPrice, setSellerPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Nvidia');
   const [gpuCondition, setGpuCondition] = useState('New');
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -69,6 +63,8 @@ const GpuPriceChecker = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     setImage(file);
 
     const reader = new FileReader();
@@ -85,6 +81,8 @@ const GpuPriceChecker = () => {
       alert('You must be logged in to post a listing.');
       return;
     }
+
+    setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append('gpuName', gpuName);
@@ -108,32 +106,25 @@ const GpuPriceChecker = () => {
         body: formData,
       });
 
-      const text = await res.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (error) {
-        console.error('Error parsing server response:', text);
-        alert('Invalid response from server.');
-        return;
-      }
-
       if (res.ok) {
         alert('GPU listing submitted successfully!');
         setGpuName('');
-        setPrice(null);
+        setSellerPrice('');
         setDescription('');
         setCategory('Nvidia');
-        setSellerPrice('');
+        setGpuCondition('New');
         setImage(null);
         setImageBase64('');
         setHasSearched(false);
       } else {
+        const data = await res.json();
         alert(`Submission failed: ${data.error}`);
       }
     } catch (error) {
       console.error('Error submitting listing:', error);
       alert('An error occurred while submitting the listing.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -172,7 +163,6 @@ const GpuPriceChecker = () => {
             className="uniform-input mt-1"
           />
         </div>
-
         <div>
           <label className="block font-medium">Category (Chipset)</label>
           <select
@@ -185,7 +175,6 @@ const GpuPriceChecker = () => {
             <option value="Intel">Intel</option>
           </select>
         </div>
-
         <div>
           <label className="block font-medium">Condition</label>
           <select
@@ -197,7 +186,6 @@ const GpuPriceChecker = () => {
             <option value="Used">Used</option>
           </select>
         </div>
-
         <div>
           <label className="block font-medium">Seller Price ($)</label>
           <input
