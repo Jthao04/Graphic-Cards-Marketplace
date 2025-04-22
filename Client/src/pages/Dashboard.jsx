@@ -12,7 +12,7 @@ const Dashboard = () => {
         const token = localStorage.getItem("token");
         const apiUrl = import.meta.env.VITE_API_URL;
 
-        const response = await fetch(`${apiUrl}/api/gpus`, {
+        const response = await fetch(`${apiUrl}/api/listings/user`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
