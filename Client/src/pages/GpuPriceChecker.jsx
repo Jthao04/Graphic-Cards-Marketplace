@@ -1,25 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import { useNavigate } from 'react-router-dom';
 
 const GpuPriceChecker = () => {
   const { user } = useAuth();
-  const navigate = useNavigate(); // Initialize navigate for redirection
+  const navigate = useNavigate();
 
   const [gpuName, setGpuName] = useState('');
-  const [price, setPrice] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [countdown, setCountdown] = useState(null);
-  const [intervalId, setIntervalId] = useState(null);
-
   const [sellerPrice, setSellerPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Nvidia');
   const [gpuCondition, setGpuCondition] = useState('New');
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -51,11 +45,7 @@ const GpuPriceChecker = () => {
           .then(res => res.json())
           .then(data => {
             setHasSearched(true);
-            if (data.averagePrice) {
-              setPrice(data.averagePrice);
-            } else {
-              setPrice(null);
-            }
+            setPrice(data.averagePrice || null);
           })
           .catch(() => {
             setHasSearched(true);
@@ -71,14 +61,15 @@ const GpuPriceChecker = () => {
     }
   };
 
-  // Convert image file to base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+
     setImage(file);
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImageBase64(reader.result.split(',')[1]); // Get base64 string (remove the data URL prefix)
+      setImageBase64(reader.result.split(',')[1]);
     };
     reader.readAsDataURL(file);
   };
@@ -91,6 +82,8 @@ const GpuPriceChecker = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append('gpuName', gpuName);
     formData.append('description', description);
@@ -98,133 +91,130 @@ const GpuPriceChecker = () => {
     formData.append('condition', gpuCondition);
     formData.append('sellerPrice', sellerPrice);
     formData.append('userId', user._id);
-    
+
     if (imageBase64) {
-      formData.append('imageData', imageBase64); // Send base64 image
-      formData.append('imageType', image.type); // Send the MIME type
+      formData.append('imageData', imageBase64);
+      formData.append('imageType', image.type);
     }
 
     try {
       const res = await fetch(`${apiUrl}/api/gpus`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem("token")}`, 
+          'Authorization': `Bearer ${localStorage.getItem("token")}`,
         },
         body: formData,
       });
 
-      const text = await res.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (error) {
-        console.error('Error parsing server response:', text);
-        alert('Invalid response from server.');
-        return;
-      }
-
       if (res.ok) {
         alert('GPU listing submitted successfully!');
         setGpuName('');
-        setPrice(null);
+        setSellerPrice('');
         setDescription('');
         setCategory('Nvidia');
-        setSellerPrice('');
+        setGpuCondition('New');
         setImage(null);
-        setImageBase64(''); 
+        setImageBase64('');
         setHasSearched(false);
       } else {
+        const data = await res.json();
         alert(`Submission failed: ${data.error}`);
       }
     } catch (error) {
       console.error('Error submitting listing:', error);
       alert('An error occurred while submitting the listing.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <h3>Post a GPU for Sale</h3>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
+      <h2 className="text-2xl font-semibold mb-4 text-center">Post a GPU for Sale</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+
         <div>
-          <label>Graphics Card Name:</label>
-          <br />
+          <label className="block font-medium">Graphics Card Name</label>
           <input
             type="text"
-            placeholder="e.g., RTX 4070 Ti"
             value={gpuName}
             onChange={handleInputChange}
+            placeholder="e.g., RTX 4070 Ti"
             required
+            className="uniform-input mt-1"
           />
         </div>
 
         {countdown !== null && countdown > 0 && (
-          <div style={{ color: 'gray' }}>Checking Amazon in {countdown}...</div>
+          <div className="text-sm text-gray-500">Checking Amazon in {countdown}...</div>
         )}
-        {loading && <div style={{ color: 'gray' }}>Checking Amazon...</div>}
-        {price && <div style={{ color: 'green' }}>Estimated Amazon Price: ${price}</div>}
+        {loading && <div className="text-sm text-gray-500">Checking Amazon...</div>}
+        {price && <div className="text-sm text-green-600">Estimated Amazon Price: ${price}</div>}
         {hasSearched && !loading && !price && (
-          <div style={{ color: 'red' }}>No price found.</div>
+          <div className="text-sm text-red-600">No price found.</div>
         )}
 
         <div>
-          <label>Description:</label>
-          <br />
+          <label className="block font-medium">Description</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            className="uniform-input mt-1"
           />
         </div>
-
         <div>
-          <label>Category (Chipset):</label>
-          <br />
+          <label className="block font-medium">Category (Chipset)</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            required
+            className="uniform-input mt-1"
           >
             <option value="Nvidia">Nvidia</option>
             <option value="AMD">AMD</option>
             <option value="Intel">Intel</option>
           </select>
         </div>
-
         <div>
-          <label>Condition:</label>
-          <select value={gpuCondition} onChange={(e) => setGpuCondition(e.target.value)}>
+          <label className="block font-medium">Condition</label>
+          <select
+            value={gpuCondition}
+            onChange={(e) => setGpuCondition(e.target.value)}
+            className="uniform-input mt-1"
+          >
             <option value="New">New</option>
             <option value="Used">Used</option>
           </select>
         </div>
-
         <div>
-          <label>Seller Price ($):</label>
-          <br />
+          <label className="block font-medium">Seller Price ($)</label>
           <input
             type="number"
             value={sellerPrice}
             onChange={(e) => setSellerPrice(e.target.value)}
             required
+            className="uniform-input mt-1"
           />
         </div>
 
-        {/* Not Working As Intended For Now
+        {/* Optional image upload (disabled for now) */}
+        {/* 
         <div>
-          <label>Upload Image:</label>
-          <br />
+          <label className="block font-medium">Upload Image</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            required
+            className="mt-1"
           />
         </div>
         */}
-        
-        <button type="submit" style={{ marginTop: '1rem' }}>
-          Submit
+
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition duration-200"
+        >
+          Submit Listing
         </button>
       </form>
     </div>
