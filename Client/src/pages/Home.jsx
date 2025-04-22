@@ -46,9 +46,9 @@ const Home = () => {
       🚫 No listings available right now. Check back soon!
     </p>
   ) : (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {listings.slice(0, 3).map((gpu) => (
-        <GpuCard key={gpu._id} gpu={gpu} />
+        <GpuCard key={gpu._id} gpu={gpu} imageClass="w-full h-32 object-cover rounded mb-3" />
       ))}
     </div>
   )}
