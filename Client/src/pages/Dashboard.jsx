@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
+import GpuCard from "../components/GpuCard.jsx";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -71,43 +72,17 @@ const Dashboard = () => {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">My Listings</h1>
-
+  
       {myListings.length === 0 ? (
         <p className="text-gray-600">You haven’t posted any listings yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {myListings.map((gpu) => (
-            <div
-              key={gpu._id}
-              className="bg-white shadow-md rounded-lg overflow-hidden"
-            >
-              <img
-                src={imageSrc}
-                alt={`${gpu.category} GPU`}
-                className={imageClass}
-              />
-              <div className="p-4">
-                <h2 className="text-xl font-semibold">{gpu.gpuName}</h2>
-                <p className="text-gray-700">${gpu.sellerPrice}</p>
-                <p className="text-sm text-gray-500">{gpu.condition} – {gpu.category}</p>
-                <p className="text-sm text-gray-600 mt-1">{gpu.description}</p>
-
-                <div className="flex justify-end gap-4 mt-4 text-sm">
-                  <button className="text-blue-500 hover:underline">Edit</button>
-                  <button
-                    onClick={() => handleDelete(gpu._id)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
+            <GpuCard key={gpu._id} gpu={gpu} onDelete={handleDelete} />
           ))}
         </div>
       )}
     </div>
   );
-};
 
 export default Dashboard;
