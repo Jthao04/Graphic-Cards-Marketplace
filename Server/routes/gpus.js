@@ -1,55 +1,50 @@
 import express from 'express';
 import multer from 'multer';
 import GpuListing from '../models/GpuListing.js';
+import { verifyToken } from '../middleware/Authmiddleware.js';
 
 const router = express.Router();
 
-// Get all GPU listings and populate the user's email
+// Multer setup
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+/**
+ * GET / - Public route to fetch all GPU listings with optional filters
+ */
 router.get('/', async (req, res) => {
   try {
-    const { category, condition } = req.query; 
-
-    // Build filter object
+    const { category, condition } = req.query;
     let filter = {};
-    if (category) {
-      filter.category = category; 
-    }
-    if (condition) {
-      filter.condition = condition; 
-    }
 
-    // Fetch listings with filters and populate the user's email
+    if (category) filter.category = category;
+    if (condition) filter.condition = condition;
+
     const listings = await GpuListing.find(filter)
-      .populate('userId', 'email')  
-      .sort({ createdAt: -1 });     
+      .populate('userId', 'email')
+      .sort({ createdAt: -1 });
 
-    res.status(200).json(listings);  
+    res.status(200).json(listings);
   } catch (err) {
     console.error('Error fetching listings:', err);
     res.status(500).json({ error: 'Server error while fetching listings' });
   }
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-// POST route for creating a new GPU listing
-router.post('/', upload.single('image'), async (req, res) => {
+/**
+ * POST / - Protected route to create a new GPU listing
+ */
+router.post('/', verifyToken, upload.single('image'), async (req, res) => {
   try {
-    const { gpuName, description, category, sellerPrice, condition, userId } = req.body;
+    const { gpuName, description, category, sellerPrice, condition } = req.body;
+    const userId = req.user.id || req.user._id; // Adjust based on your token payload
 
-    // Check if userId is present
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required to post a listing.' });
-    }
-
-    // If an image is uploaded, convert the image file to base64
     let imageData = null;
     let imageType = null;
 
     if (req.file) {
-      imageData = req.file.buffer.toString('base64');  
-      imageType = req.file.mimetype;  
+      imageData = req.file.buffer.toString('base64');
+      imageType = req.file.mimetype;
     }
 
     const newListing = new GpuListing({
@@ -58,9 +53,9 @@ router.post('/', upload.single('image'), async (req, res) => {
       category,
       condition,
       sellerPrice,
-      imageData,  // Store base64 image data
-      imageType,  // Store MIME type
-      userId
+      imageData,
+      imageType,
+      userId,
     });
 
     await newListing.save();
@@ -68,6 +63,20 @@ router.post('/', upload.single('image'), async (req, res) => {
   } catch (err) {
     console.error('Error saving listing:', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+/**
+ * GET /user - Protected route to fetch listings for the logged-in user
+ */
+router.get('/user', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id || req.user._id; // Adjust depending on JWT token structure
+    const userListings = await GpuListing.find({ userId }).sort({ createdAt: -1 });
+    res.status(200).json(userListings);
+  } catch (err) {
+    console.error('Error fetching user listings:', err);
+    res.status(500).json({ error: 'Server error while fetching user listings' });
   }
 });
 
