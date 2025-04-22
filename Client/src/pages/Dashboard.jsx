@@ -12,7 +12,7 @@ const Dashboard = () => {
         const token = localStorage.getItem("token");
         const apiUrl = import.meta.env.VITE_API_URL;
   
-        const response = await fetch(`${apiUrl}/api/gpus/user/${user._id}`, {
+        const response = await fetch(`${apiUrl}/api/gpus/user`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,13 +82,16 @@ const Dashboard = () => {
               className="bg-white shadow-md rounded-lg overflow-hidden"
             >
               <img
-                src={gpu.image || "/gpu-placeholder.jpg"} //
-                alt={gpu.title}
-                className="h-48 w-full object-cover"
+                src={imageSrc}
+                alt={`${gpu.category} GPU`}
+                className={imageClass}
               />
               <div className="p-4">
-                <h2 className="text-xl font-semibold">{gpu.title}</h2>
-                <p className="text-gray-700">${gpu.price}</p>
+                <h2 className="text-xl font-semibold">{gpu.gpuName}</h2>
+                <p className="text-gray-700">${gpu.sellerPrice}</p>
+                <p className="text-sm text-gray-500">{gpu.condition} – {gpu.category}</p>
+                <p className="text-sm text-gray-600 mt-1">{gpu.description}</p>
+
                 <div className="flex justify-end gap-4 mt-4 text-sm">
                   <button className="text-blue-500 hover:underline">Edit</button>
                   <button
