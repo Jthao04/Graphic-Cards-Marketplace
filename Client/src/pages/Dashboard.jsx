@@ -74,7 +74,7 @@ const Dashboard = () => {
       <h1 className="text-3xl font-bold mb-6">My Listings</h1>
   
       {myListings.length === 0 ? (
-        <p className="text-gray-600">You haven’t posted any listings yet.</p>
+        <p className="text-gray-600">You haven't posted any listings yet.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {myListings.map((gpu) => (
@@ -84,5 +84,6 @@ const Dashboard = () => {
       )}
     </div>
   );
+};
 
 export default Dashboard;
