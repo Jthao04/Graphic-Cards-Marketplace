@@ -14,7 +14,7 @@ const GpuCard = ({ gpu, imageClass = "w-full h-48 object-cover rounded mb-4" }) 
       <img
         src={imageSrc}
         alt={`${gpu.category} GPU`}
-        className={`${imageClass} w-64 h-64 object-cover`} // Fixed width and height
+        className={imageClass}
       />
       <h2 className="text-xl font-semibold mb-2">{gpu.gpuName}</h2>
       <p className="text-gray-700 mb-1"><strong>Price:</strong> ${gpu.sellerPrice}</p>
